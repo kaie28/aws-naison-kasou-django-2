@@ -1,16 +1,30 @@
+
 import os
+import environ  # ★
+from pathlib import Path   #★
+
 from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ★ .envファイル(22番でDjangoシークレトキーやEC2のMy IPなど自動で呼び出し)を探して読み込む設定 （ ● このBASE_DIRの下に、下記2行を追記）
+
+env = environ.Env() #★
+environ.Env.read_env(os.path.join(BASE_DIR, '.env')) #★
+
+
 SECRET_KEY = os.getenv('SECRET_KEY')
+MY_IP = '13.231.131.73'
 
 DEBUG = True
 
-ALLOWED_HOSTS = [os.getenv('MY_IP'), '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = [
 
+    os.environ.get('MY_IP', 'localhost'),
+    '127.0.0.1',
+]
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,7 +51,7 @@ ROOT_URLCONF = 'todoproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
